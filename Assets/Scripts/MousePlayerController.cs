@@ -3,45 +3,91 @@ using Abstractions.Interfaces;
 using UnityEngine;
 using UnityEngine.Events;
 
+[Serializable]
+public class MoveMouseEvent : UnityEvent<float>
+{
+    
+}
+
 public class MousePlayerController : MonoBehaviour, IPlayerController
 {
-    public void AddHandlerToOnMouseMoveVerticallyEvent(UnityAction<float> moveMouseEventHandler)
+    private MoveMouseEvent m_onMouseMoveHorizontally;
+    private MoveMouseEvent m_onMouseMoveVertically;
+    private UnityEvent m_onZoomButtonPressed;
+    private UnityEvent m_onZoomButtonReleased;
+
+    public MousePlayerController(MoveMouseEvent onMouseMoveVertically)
     {
-        throw new NotImplementedException();
+        this.m_onMouseMoveVertically = onMouseMoveVertically;
     }
 
-    public void RemoveHandlerFromOnMouseMoveVerticallyEvent(UnityAction<float> moveMouseEventHandler)
+    public void AddHandlerToOnMouseMoveVerticallyEvent(UnityAction<float> moveMouseVerticallyEventHandler)
     {
-        throw new NotImplementedException();
+        m_onMouseMoveVertically.AddListener(moveMouseVerticallyEventHandler);
     }
 
-    public void AddHandlerToMouseMoveHorizontallyEvent(UnityAction<float> moveMouseEventHandler)
+    public void RemoveHandlerFromOnMouseMoveVerticallyEvent(UnityAction<float> moveMouseVerticallyEventHandler)
     {
-        throw new NotImplementedException();
+        m_onMouseMoveVertically.RemoveListener(moveMouseVerticallyEventHandler);
     }
 
-    public void RemoveHandlerFromMouseMoveHorizontallyEvent(UnityAction<float> moveMouseEventHandler)
+    public void AddHandlerToMouseMoveHorizontallyEvent(UnityAction<float> moveMouseHorizontallyEventHandler)
     {
-        throw new NotImplementedException();
+        m_onMouseMoveHorizontally.AddListener(moveMouseHorizontallyEventHandler);
     }
 
-    public void AddHandlerToZoomButtonPressedEvent(UnityAction scopeEventHandler)
+    public void RemoveHandlerFromMouseMoveHorizontallyEvent(UnityAction<float> moveMouseHorizontallyEventHandler)
     {
-        throw new NotImplementedException();
+        m_onMouseMoveHorizontally.RemoveListener(moveMouseHorizontallyEventHandler);
     }
 
-    public void RemoveHandlerFromZoomButtonPressedEvent(UnityAction scopeEventHandler)
+    public void AddHandlerToZoomButtonPressedEvent(UnityAction zoomInEventHandler)
     {
-        throw new NotImplementedException();
+        m_onZoomButtonPressed.AddListener(zoomInEventHandler);
+    }
+
+    public void RemoveHandlerFromZoomButtonPressedEvent(UnityAction zoomInEventHandler)
+    {
+        m_onZoomButtonPressed.RemoveListener(zoomInEventHandler);
     }
 
     public void AddHandlerToZoomButtonReleasedEvent(UnityAction zoomOutEventHandler)
     {
-        throw new NotImplementedException();
+        m_onZoomButtonReleased.AddListener(zoomOutEventHandler);
     }
 
     public void RemoveHandlerFromZoomButtonReleasedEvent(UnityAction zoomOutEventHandler)
     {
-        throw new NotImplementedException();
+        m_onZoomButtonReleased.RemoveListener(zoomOutEventHandler);
+    }
+
+    private void Awake()
+    {
+        m_onMouseMoveHorizontally = new MoveMouseEvent();
+        m_onMouseMoveVertically = new MoveMouseEvent();
+        m_onZoomButtonPressed = new UnityEvent();
+        m_onZoomButtonReleased = new UnityEvent();
+    }
+
+    private void Update()
+    {
+        ProcessInput();
+    }
+
+    private void ProcessInput()
+    {
+        m_onMouseMoveVertically.Invoke(Input.GetAxis("Mouse Y"));
+        m_onMouseMoveHorizontally.Invoke(Input.GetAxis("Mouse X"));
+        
+
+        if (Input.GetButtonDown("Fire2"))
+        {
+            m_onZoomButtonPressed.Invoke();
+        }
+        
+        if (Input.GetButtonUp("Fire2"))
+        {
+            m_onZoomButtonReleased.Invoke();
+        }
     }
 }

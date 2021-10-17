@@ -4,6 +4,6 @@ namespace Abstractions.Interfaces
 {
     public interface IPlayerViewVerticalScroller
     {
-        void ScrollViewVertically(float horizontalAxis);
+        void ScrollViewVertically(float verticalAxis);
     }
 }
